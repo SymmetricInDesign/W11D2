@@ -1,10 +1,10 @@
-class SessionsController < ApplicationController
+class Api::SessionsController < ApplicationController
 
     def create
         @user = User.find_by_credentials(params[:user][:username], params[:user][:password])
         if @user
             login!(@user)
-            redirect_to :user_url
+            redirect_to :root
         else
             render json: {errors: ["invalid username or password"]}
         end
