@@ -237,9 +237,7 @@ var createNewUser = function createNewUser(formUser) {
 var createNewSession = function createNewSession(formUser) {
   return function (dispatch) {
     return (0,_util_session_api_util__WEBPACK_IMPORTED_MODULE_0__.login)(formUser).then(function (user) {
-      return dispatch(receiveCurrentUser(user))["catch"](function (errors) {
-        dispatch(receiveLoginErrors(errors.responseJSON));
-      });
+      return dispatch(receiveCurrentUser(user));
     });
   };
 };
@@ -530,7 +528,8 @@ var SessionForm = /*#__PURE__*/function (_React$Component) {
     key: "handleSubmit",
     value: function handleSubmit(e) {
       e.preventDefault();
-      var user = Object.assign({}, this.state);
+      var user = Object.assign({}, this.state); // debugger
+
       this.props.processForm(user);
     }
   }, {
@@ -732,18 +731,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_session_actions__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../actions/session_actions */ "./frontend/actions/session_actions.js");
 
 var _nullSession = {
-  currentUser: null
+  id: null
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function () {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _nullSession;
   var action = arguments.length > 1 ? arguments[1] : undefined;
-  Object.freeze(state);
+  Object.freeze(state); // debugger
 
   switch (action.type) {
     case _actions_session_actions__WEBPACK_IMPORTED_MODULE_0__.RECEIVE_CURRENT_USER:
-      return Object.assign({}, {
-        currentUser: action.user
+      debugger;
+      var newState = Object.assign({}, {
+        id: action.user.id
       });
+      return newState;
 
     case _actions_session_actions__WEBPACK_IMPORTED_MODULE_0__.LOGOUT_CURRENT_USER:
       return _nullSession;
@@ -870,8 +871,8 @@ var Protected = function Protected(_ref2) {
   });
 };
 
-var AuthRoute = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.withRouter)((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mSTP)(Auth));
-var ProtectedRoute = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.withRouter)((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mSTP)(Protected));
+var AuthRoute = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.withRouter)((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mSTP, null)(Auth));
+var ProtectedRoute = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_2__.withRouter)((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mSTP, null)(Protected));
 
 /***/ }),
 
@@ -37336,12 +37337,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var _components_root__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/root */ "./frontend/components/root.jsx");
 /* harmony import */ var _store_store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store/store */ "./frontend/store/store.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  var store = (0,_store_store__WEBPACK_IMPORTED_MODULE_3__.default)();
+  var store;
+
+  if (window.currentUser) {
+    var preloadedState = {
+      entities: {
+        users: _defineProperty({}, window.currentUser.id, window.currentUser)
+      },
+      session: {
+        id: window.currentUser.id
+      }
+    };
+    store = (0,_store_store__WEBPACK_IMPORTED_MODULE_3__.default)(preloadedState);
+    delete window.currentUser;
+  } else {
+    store = (0,_store_store__WEBPACK_IMPORTED_MODULE_3__.default)();
+  }
+
   window.getState = store.getState;
   window.dispatch = store.dispatch; // just for testing!
 

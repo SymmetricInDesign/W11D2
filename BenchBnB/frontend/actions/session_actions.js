@@ -21,10 +21,7 @@ export const createNewUser = formUser => dispatch => signup(formUser)
     .then(user => dispatch(receiveCurrentUser(user)))
 
 export const createNewSession = formUser => dispatch => login(formUser)
-    .then(user => dispatch(receiveCurrentUser(user))
-    .catch(errors => {
-        dispatch(receiveLoginErrors(errors.responseJSON))
-    }))
+    .then(user => dispatch(receiveCurrentUser(user)))
 
 export const deleteSession = () => dispatch => logout()
     .then(() => dispatch(logoutCurrentUser()))
